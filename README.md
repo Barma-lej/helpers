@@ -1,2 +1,2 @@
 # helpers
-Manuals, booklets and other helpers
+Manuals, bookmarklets and other helpers
