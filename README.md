@@ -1,2 +1,23 @@
-# helpers
-Manuals, bookmarklets and other helpers
+# Helpers
+
+Личная коллекция руководств, закладок-инструментов и шпаргалок для работы с различными системами и инструментами.
+
+## Содержание
+
+| Файл | Описание |
+|---|---|
+| [bookmarklets.md](bookmarklets.md) | Bookmarklet-инструменты для браузера: перевод, навигация, отправка в WhatsApp |
+| [proxmox.md](proxmox.md) | Установка, настройка и шпаргалка по Proxmox VE |
+
+## Вики
+
+Подробная документация доступна в [Wiki](../../wiki):
+
+| Страница | Описание |
+|---|---|
+| [Bookmarklets](../../wiki/Bookmarklets) | Инструменты для браузера на JavaScript |
+| [Proxmox](../../wiki/Proxmox) | Руководство по Proxmox VE |
+
+## Лицензия
+
+[MIT](LICENSE)
