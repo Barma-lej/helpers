@@ -1,27 +1,15 @@
 # Helpers
 
-Личная коллекция руководств, закладок-инструментов и шпаргалок для работы с различными системами и инструментами.
+Личная коллекция шпаргалок, инструментов и утилит.
 
-## Tools
-
-| Файл | Описание |
-|---|---|
-| [bookmarklets.md](bookmarklets.md) | Bookmarklet-инструменты для браузера: перевод, навигация, отправка в WhatsApp |
+📖 Шпаргалки и документация — в [Wiki](../../wiki)
 
 ## Utilities
 
-| Файл | Описание |
+| Папка | Описание |
 |---|---|
-| [proxmox.md](proxmox.md) | Установка, настройка и шпаргалка по Proxmox VE |
-
-## Вики
-
-Подробная документация доступна в [Wiki](../../wiki):
-
-| Страница | Категория | Описание |
-|---|---|---|
-| [Bookmarklets](../../wiki/Bookmarklets) | Tools | Bookmarklet-инструменты для браузера на JavaScript |
-| [Proxmox](../../wiki/Proxmox) | Utilities | Руководство по Proxmox VE |
+| [Protect-RDSFromBruteforce](utilities/Protect-RDSFromBruteforce) | Защита RDS от брутфорса (PowerShell + Task Scheduler) |
+| [users_login_log](utilities/users_login_log) | Логирование входов и переподключений пользователей (PowerShell + Task Scheduler) |
 
 ## Лицензия
 
