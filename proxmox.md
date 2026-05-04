@@ -1,36 +1,36 @@
-# Install on NUC
+# Установка на NUC
 
-Download:
+Скачать:
 * [Proxmox](https://www.proxmox.com/en/downloads)
 * [rufus](https://rufus.ie/)
 
-Create bootable USB-Stick with rufus, **choose DD as a write method**
+Создать загрузочную USB-флешку с помощью rufus, **выбрать DD как метод записи**
 
-## Partitions after installation
+## Разделы после установки
 
-|     Device     |  Start  |    End    |  Sectors  |  Size  |       Type       |
-|:--------------:|:-------:|:---------:|:---------:|:------:|:----------------:|
-| /dev/nvme0n1p1 | 34      | 2047      | 2014      | 1007K  | BIOS boot        |
-| /dev/nvme0n1p2 | 2048    | 1050623   | 1048576   | 512M   | EFI System       |
-| /dev/nvme0n1p3 | 1050624 | 976773134 | 975722511 | 465.3G | Linux LVM        |
-| /dev/sda1      | 2048    | 976773134 | 976771087 | 465.8G | Linux filesystem |
+|     Устройство     |  Начало  |   Конец   |  Секторы  | Размер |       Тип        |
+|:------------------:|:--------:|:---------:|:---------:|:------:|:----------------:|
+| /dev/nvme0n1p1     | 34       | 2047      | 2014      | 1007K  | BIOS boot        |
+| /dev/nvme0n1p2     | 2048     | 1050623   | 1048576   | 512M   | EFI System       |
+| /dev/nvme0n1p3     | 1050624  | 976773134 | 975722511 | 465.3G | Linux LVM        |
+| /dev/sda1          | 2048     | 976773134 | 976771087 | 465.8G | Linux filesystem |
 
-## Configuration
+## Настройка
 
-### Remove enterprise subscription
+### Удалить enterprise-подписку
 
 ```bash
 rm -f /etc/apt/sources.list.d/pve-enterprise.list
 echo "deb http://download.proxmox.com/debian/pve bookworm pve-no-subscription" > /etc/apt/sources.list.d/pve-no-subscription.list
 ```
 
-### Update and install mc
+### Обновить систему и установить mc
 
 ```bash
 apt update && apt full-upgrade -y && apt install mc -y
 ```
 
-### Set `nano` as default editor
+### Установить `nano` редактором по умолчанию
 
 ```bash
 update-alternatives --config editor
@@ -38,9 +38,9 @@ update-alternatives --config editor
 
 ---
 
-## Disk operations
+## Работа с дисками
 
-### Disk partition
+### Разметка диска
 
 ```bash
 ls -l /dev | grep nvme
@@ -85,55 +85,55 @@ Calling ioctl() to re-read partition table.
 Syncing disks.
 ```
 
-### Add a HDD disk to Proxmox
+### Добавить HDD-диск в Proxmox
 
 ```bash
 lsblk
 ```
 
 ```
-NAME              MAJ:MIN  RM    SIZE  RO  TYPE  MOUNTPOINT
-sda                 8:0     0  465.8G   0  disk
-└─sda1              8:1     0  465.8G   0  part
-  └─hdd-root      253:5     0    300G   0  lvm   /mnt/root
-nvme0n1           259:0     0  465.8G   0  disk
-├─nvme0n1p1       259:1     0   1007K   0  part
-├─nvme0n1p2       259:2     0    512M   0  part  /boot/efi
-└─nvme0n1p3       259:3     0  465.3G   0  part
-  ├─pve-swap      253:0     0      8G   0  lvm   [SWAP]
-  ├─pve-root      253:1     0     96G   0  lvm   /
-  ├─pve-data_tmeta 253:2    0    3.5G   0  lvm
-  │ └─pve-data    253:4     0  338.4G   0  lvm
-  └─pve-data_tdata 253:3    0  338.4G   0  lvm
-    └─pve-data    253:4     0  338.4G   0  lvm
+NAME               MAJ:MIN  RM    SIZE  RO  TYPE  MOUNTPOINT
+sda                  8:0     0  465.8G   0  disk
+└─sda1               8:1     0  465.8G   0  part
+  └─hdd-root       253:5     0    300G   0  lvm   /mnt/root
+nvme0n1            259:0     0  465.8G   0  disk
+├─nvme0n1p1        259:1     0   1007K   0  part
+├─nvme0n1p2        259:2     0    512M   0  part  /boot/efi
+└─nvme0n1p3        259:3     0  465.3G   0  part
+  ├─pve-swap       253:0     0      8G   0  lvm   [SWAP]
+  ├─pve-root       253:1     0     96G   0  lvm   /
+  ├─pve-data_tmeta 253:2     0    3.5G   0  lvm
+  │ └─pve-data     253:4     0  338.4G   0  lvm
+  └─pve-data_tdata 253:3     0  338.4G   0  lvm
+    └─pve-data     253:4     0  338.4G   0  lvm
 ```
 
-Create physical volume:
+Создать физический том:
 
 ```bash
 pvcreate /dev/sda1
 ```
 
-Create Volume group **hdd**:
+Создать группу томов **hdd**:
 
 ```bash
 vgcreate hdd /dev/sda1
 ```
 
-Create logical volume (450G) in **hdd** for Backups, ISO-Images etc.:
+Создать логический том (450G) в **hdd** для бэкапов, ISO-образов и т.д.:
 
 ```bash
 lvcreate -L 450G -n root hdd
 mkfs.ext4 -L hdd-root /dev/hdd/root
 ```
 
-Create a mount point:
+Создать точку монтирования:
 
 ```bash
 mkdir -p /mnt/root
 ```
 
-Edit `/etc/fstab` and add the mount entry:
+Отредактировать `/etc/fstab` и добавить запись:
 
 ```bash
 nano /etc/fstab
@@ -143,56 +143,56 @@ nano /etc/fstab
 /dev/hdd/root /mnt/root ext4 errors=remount-ro 0 1
 ```
 
-Mount logical volume:
+Смонтировать логический том:
 
 ```bash
 mount -a
 ```
 
-#### Create a Directory Storage
+#### Создать Directory Storage
 
 **Datacenter → Storage → Add → Directory**
 
-| Field     | Value      |
+| Поле      | Значение   |
 |-----------|------------|
 | ID        | hdd-root   |
 | Directory | /mnt/root  |
 
 ---
 
-## Useful Commands
+## Полезные команды
 
-> Reference: [LVM basics & commands](https://dannyda.com/2020/05/10/how-to-delete-remove-local-lvm-from-proxmox-ve-pve-and-some-lvm-basics-commands/)
+> Справка: [Основы LVM и команды](https://dannyda.com/2020/05/10/how-to-delete-remove-local-lvm-from-proxmox-ve-pve-and-some-lvm-basics-commands/)
 
-### VM Management
+### Управление виртуальными машинами
 
 ```bash
-# List all VMs
+# Список всех ВМ
 qm list
 
-# Start / stop / reboot / shutdown
+# Запуск / остановка / перезагрузка / выключение
 qm start <vmid>
 qm stop <vmid>
 qm reboot <vmid>
 qm shutdown <vmid>
 
-# VM status and config
+# Статус и конфигурация ВМ
 qm status <vmid>
 qm config <vmid>
 
-# Remove VM
+# Удалить ВМ
 qm destroy <vmid>
 
-# Snapshots
-qm snapshot <vmid> <snapname>
-qm rollback <vmid> <snapname>
+# Снапшоты
+qm snapshot <vmid> <имя>
+qm rollback <vmid> <имя>
 qm listsnapshot <vmid>
 
-# Enter VM terminal
+# Открыть терминал ВМ
 qm terminal <vmid>
 ```
 
-### Unlock locked virtual machine
+### Разблокировать заблокированную ВМ
 
 ```bash
 rm -f /var/lock/qemu-server/lock-101.conf
@@ -200,103 +200,103 @@ qm unlock 100
 qm stop 100
 ```
 
-### Kill VM process
+### Принудительно завершить процесс ВМ
 
 ```bash
 ps aux | grep "/usr/bin/kvm -id <VID>"
 kill -9 <PID>
 ```
 
-### Container (LXC) Management
+### Управление контейнерами (LXC)
 
 ```bash
-# List all containers
+# Список всех контейнеров
 pct list
 
-# Start / stop / reboot
+# Запуск / остановка / перезагрузка
 pct start <ctid>
 pct stop <ctid>
 pct reboot <ctid>
 
-# Enter container shell
+# Войти в оболочку контейнера
 pct enter <ctid>
 
-# Config and snapshots
+# Конфигурация и снапшоты
 pct config <ctid>
-pct snapshot <ctid> <snapname>
-pct rollback <ctid> <snapname>
+pct snapshot <ctid> <имя>
+pct rollback <ctid> <имя>
 ```
 
-### Disk & LVM Info
+### Информация о дисках и LVM
 
-> **pv** = Physical Volume · **vg** = Volume Group · **lv** = Logical Volume
+> **pv** = физический том · **vg** = группа томов · **lv** = логический том
 
 ```bash
-# Block devices
+# Все блочные устройства
 lsblk
 
-# Detailed info
+# Подробная информация
 pvdisplay /dev/nvme0n1p3
 vgdisplay hdd
 lvdisplay /dev/pve/root
 lvdisplay /dev/hdd/root
 
-# Short summary
+# Краткая сводка
 pvs
 vgs
 lvs
 ```
 
-### Storage
+### Хранилища
 
 ```bash
-# List storages and status
+# Список хранилищ и их статус
 pvesm status
 
-# List storage contents
+# Содержимое хранилища
 pvesm list <storage>
 
-# Resize VM disk
+# Увеличить диск ВМ
 qm resize <vmid> <disk> +10G
 ```
 
-### Backup & Restore
+### Резервное копирование и восстановление
 
 ```bash
-# Backup VM
+# Создать бэкап ВМ
 vzdump <vmid> --storage <storage> --mode snapshot --compress zstd
 
-# Restore VM
+# Восстановить ВМ
 qmrestore /var/lib/vz/dump/<backup.vma.zst> <vmid>
 
-# Restore container
+# Восстановить контейнер
 pct restore <ctid> /var/lib/vz/dump/<backup.tar.zst>
 ```
 
-### Network
+### Сеть
 
 ```bash
-# Reload network interfaces
+# Перезагрузить сетевые интерфейсы
 ifreload -a
 
-# Show interfaces
+# Показать интерфейсы
 ip a
 
-# Monitor traffic
+# Мониторинг трафика
 iftop -i vmbr0
 ```
 
-### Logs & Monitoring
+### Логи и мониторинг
 
 ```bash
-# PVE service logs
+# Логи служб PVE
 journalctl -u pveproxy -f
 journalctl -u pvedaemon -f
 
-# Node resource status
+# Статус ресурсов ноды
 pvesh get /nodes/<nodename>/status
 
-# Cluster status
+# Статус кластера
 pvecm status
 pvecm nodes
 ```
